@@ -201,3 +201,40 @@ def test_render_clip():
     assert out.size == (200, 80)
     assert out.mode == "RGB"
     assert out.getextrema()[0][0] < 255  # some ink in the clip
+
+
+def layers(snap):
+    return [c["value"]["layer"] for c in snap["chrono_components"] if c["value"]]
+
+
+def test_strokes_go_on_rnotes_own_layers():
+    snap = rnote.engine_snapshot(["Exercise 1", img(100, 50)])
+    assert layers(snap) == [{"user_layer": 0}, "image"]
+
+
+def test_a_bare_image_width_pair_is_one_item():
+    snap = rnote.engine_snapshot((img(100, 100), 300.0))
+    (s,) = [c["value"] for c in snap["stroke_components"] if c["value"]]
+    assert math.isclose(placed(s)[2], 300.0)
+
+
+def test_unsupported_item_is_rejected():
+    with pytest.raises(TypeError, match="items must be images"):
+        rnote.engine_snapshot([img(10, 10), 300.0])
+
+
+def test_stack_keeps_the_background_behind_transparency():
+    out = rnote.stack([Image.new("RGBA", (10, 10), (255, 0, 0, 0))])
+    assert out.getpixel((5, 5)) == (255, 255, 255)
+
+
+def test_layer_can_be_chosen():
+    snap = rnote.engine_snapshot(["title", img(10, 10)], layer="document")
+    assert layers(snap) == [{"user_layer": 0}, "document"]
+    snap = rnote.engine_snapshot(img(10, 10), layer=2)
+    assert layers(snap) == [{"user_layer": 2}]
+
+
+def test_unknown_layer_is_rejected():
+    with pytest.raises(ValueError, match="layer must be one of"):
+        rnote.engine_snapshot([], layer="background")

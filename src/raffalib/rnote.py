@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-"""Write and read `Rnote <https://rnote.flxzt.net/>`_ save files (``.rnote``, engine format 0.14).
+"""Write and read `Rnote <https://rnote.flxzt.net/>`_ save files (``.rnote``).
 
 Rnote is a handwriting note-taking app. Its save file is a gzip-compressed JSON
 document holding an *engine snapshot*: the page configuration, the camera and the
@@ -24,10 +24,12 @@ statement at the top of the page with the rest of the page free for handwritten 
 
 Items are placed one below the other from the top-left corner of the first page,
 images as bitmap strokes and text as text strokes (the ones Rnote's typewriter tool
-makes), and the document is made tall enough to leave room below the last one. The
-page format and background default to the ones used in the author's own Rnote
-notebooks (A4 at 96 dpi, infinite layout, light-blue grid); build a different one
-with :func:`document_config`. A plain string is text in Rnote's default style; a
+makes). Each stroke goes on the layer Rnote itself would put it on -- images on the
+image layer (see `layer`), text on the first user layer -- so handwriting always sits
+above them.
+The page format and background default to A4 at 96 dpi, infinite layout and Rnote's
+own light-blue pattern colour, drawn as a grid; build a different one with
+:func:`document_config`. A plain string is text in Rnote's default style; a
 :class:`Text` chooses font, size, weight, colour and alignment. Rnote lays text out
 with the named font when it opens the file, so the height a text item takes is
 estimated here (see :data:`LINE_HEIGHT`) only to place the next item below it.
@@ -62,9 +64,15 @@ A4_HEIGHT = 1122.52
 MARGIN = 40.0
 #: Vertical space between stacked images, in document units.
 GAP = 24.0
-#: Minimum free space kept below the last image, in document units.
+#: Minimum free space kept below the last image, in document units. Only has an effect
+#: with ``layout="fixed_size"``: every other layout recomputes the document size when the
+#: file is opened (the infinite ones grow it by two page sizes around the content).
 TAIL = 200.0
-#: Rnote version written in the file header.
+#: Rnote version written in the file header. This is not cosmetic: it selects the schema
+#: Rnote deserialises the snapshot with. ``0.14.2`` means the 0.13+ schema written here
+#: (nested ``document.config``, 9-element ``transform`` matrices), which Rnote 0.15 still
+#: reads by upgrading it on load. Raising it to ``0.15`` or above without rewriting the
+#: matrices as 6-element ``affine`` arrays would make the file unreadable.
 RNOTE_VERSION = "0.14.2"
 #: Default text style, the one of Rnote's typewriter tool: font family, size (document units), weight.
 FONT_FAMILY = "serif"
@@ -73,6 +81,9 @@ FONT_WEIGHT = 500
 #: Height given to each line of text when estimating the space a text item takes, as a
 #: multiple of the font size.
 LINE_HEIGHT = 1.25
+#: Named stroke layers, drawn in this order (a numbered user layer sits above them all).
+#: Rnote puts pasted images on ``"image"`` and pages imported from a PDF on ``"document"``.
+LAYERS = ("document", "image", "highlighter")
 
 
 def _rgba(r: float, g: float, b: float, a: float = 1.0) -> dict:
@@ -131,6 +142,18 @@ def document_config(
     }
 
 
+def _layer(layer: str | int) -> dict | str:
+    """`layer` as Rnote's ``StrokeLayer``: a name from :data:`LAYERS`, or a user layer number."""
+    if isinstance(layer, int) and not isinstance(layer, bool):
+        return {"user_layer": layer}
+    if layer in LAYERS:
+        return layer
+    raise ValueError(
+        f"layer must be one of {', '.join(LAYERS)} or an int for a numbered user layer, "
+        f"not {layer!r}"
+    )
+
+
 def _rect(w: float, h: float, cx: float, cy: float) -> dict:
     """Rnote rectangle: half extents plus an affine transform placing its centre at (cx, cy)."""
     return {
@@ -140,7 +163,11 @@ def _rect(w: float, h: float, cx: float, cy: float) -> dict:
 
 
 def _premultiplied_rgba(img: Image.Image) -> Image.Image:
-    """`img` as RGBA with the colour channels multiplied by alpha, as Rnote stores bitmaps."""
+    """`img` as RGBA with the colour channels multiplied by alpha, as Rnote stores bitmaps.
+
+    Rnote tags every bitmap ``R8g8b8a8Premultiplied`` and its renderer expects exactly
+    that, so the multiplication is done here even though Rnote's own image import skips
+    it. Pillow truncates the division by 255, so a channel can come out one level low."""
     rgba = img.convert("RGBA")
     alpha = rgba.getchannel("A")
     if alpha.getextrema()[0] == 255:
@@ -285,9 +312,20 @@ def text_stroke(
     return stroke, _text_height(text, font_size, max_width)
 
 
+def _is_pair(item) -> bool:
+    """True for an ``(image, width)`` pair."""
+    return (
+        isinstance(item, (tuple, list))
+        and len(item) == 2
+        and isinstance(item[0], Image.Image)
+    )
+
+
 def _normalise(items, max_width: float) -> list:
     """`items` as a list of (image, width) pairs and :class:`Text` objects."""
-    if isinstance(items, (Image.Image, str, Text)):
+    if isinstance(items, (Image.Image, str, Text)) or (
+        isinstance(items, tuple) and _is_pair(items)
+    ):
         items = [items]
     out = []
     for item in items:
@@ -297,9 +335,14 @@ def _normalise(items, max_width: float) -> list:
             out.append(Text(item))
         elif isinstance(item, Text):
             out.append(item)
-        else:
+        elif _is_pair(item):
             img, w = item
             out.append((img, min(float(w), max_width)))
+        else:
+            raise TypeError(
+                "items must be images, (image, width) pairs, strings or Text objects, "
+                f"not {type(item).__name__}"
+            )
     return out
 
 
@@ -309,6 +352,7 @@ def engine_snapshot(
     margin: float = MARGIN,
     gap: float = GAP,
     tail: float = TAIL,
+    layer: str | int = "image",
     config: dict | None = None,
 ) -> dict:
     """Engine snapshot holding `items` one below the other from the top-left of the first page.
@@ -322,17 +366,24 @@ def engine_snapshot(
     :type margin: float
     :param gap: vertical space between consecutive items, document units
     :type gap: float
-    :param tail: minimum free space left below the last item (the document grows to fit)
+    :param tail: minimum free space left below the last item; only kept with
+        ``layout="fixed_size"`` (see :data:`TAIL`)
     :type tail: float
-    :param config: page configuration from :func:`document_config`; default A4, light-blue grid
+    :param layer: layer the images go on: a name from :data:`LAYERS` or an int for a
+        numbered user layer. The default is where Rnote puts a pasted image; its PDF import
+        uses ``"document"`` instead, which draws below that. Text always goes on user layer 0
+    :type layer: str | int
+    :param config: page configuration from :func:`document_config`; default A4, infinite
+        layout, light-blue grid
     :type config: dict | None
     :return: the snapshot (``document``, ``camera``, stroke and chrono components)
     :rtype: dict
     """
     config = config or document_config()
+    _layer(layer)  # reject a bad layer before writing anything, even with no images
     page_w, page_h = config["format"]["width"], config["format"]["height"]
     full = page_w - 2 * margin
-    strokes, y = [], margin
+    strokes, y = [], margin  # strokes: (stroke, layer) pairs
     for item in _normalise(items, full):
         if isinstance(item, Text):
             stroke, height = text_stroke(
@@ -347,9 +398,11 @@ def engine_snapshot(
                 max_width=full if item.width is None else min(item.width, full),
                 alignment=item.alignment,
             )
+            stroke_layer = 0
         else:
             stroke, height = bitmap_stroke(item[0], margin, y, item[1])
-        strokes.append(stroke)
+            stroke_layer = layer
+        strokes.append((stroke, stroke_layer))
         y += height + gap
     doc_h = max(page_h, y - gap + tail) if strokes else page_h
     return {
@@ -362,11 +415,11 @@ def engine_snapshot(
         },
         "camera": {"offset": [-margin, -margin], "size": [1200.0, 800.0], "zoom": 1.0},
         "stroke_components": [{"value": None, "version": 0}]
-        + [{"value": s, "version": 1} for s in strokes],
+        + [{"value": s, "version": 1} for s, _ in strokes],
         "chrono_components": [{"value": None, "version": 0}]
         + [
-            {"value": {"t": i + 1, "layer": {"user_layer": 0}}, "version": 1}
-            for i in range(len(strokes))
+            {"value": {"t": i + 1, "layer": _layer(lyr)}, "version": 1}
+            for i, (_, lyr) in enumerate(strokes)
         ],
         "chrono_counter": len(strokes),
     }
@@ -416,6 +469,10 @@ def write_rnote(fp, items, **kwargs) -> int:
 def read_rnote(fp) -> dict:
     """Parse an ``.rnote`` file written in the gzip-JSON format.
 
+    The snapshot is returned as it is stored, so its shape follows the file's ``version``:
+    files written before Rnote 0.13 keep ``format``, ``background`` and ``layout`` directly
+    on ``document`` instead of under ``document.config``.
+
     :param fp: path of the file
     :type fp: str | pathlib.Path
     :return: the decoded document: ``{"version": ..., "data": {"engine_snapshot": ...}}``
@@ -426,6 +483,8 @@ def read_rnote(fp) -> dict:
 
 def stack(images: list[Image.Image], gaps: list[int] | None = None) -> Image.Image:
     """Stack images vertically, left-aligned on white, into one image.
+
+    Transparent areas of an RGBA image keep the white background.
 
     :param images: the images, top to bottom
     :type images: list[PIL.Image.Image]
@@ -441,7 +500,7 @@ def stack(images: list[Image.Image], gaps: list[int] | None = None) -> Image.Ima
     y = 0
     for img, gap in zip(images, gaps):
         y += gap
-        out.paste(img, (0, y))
+        out.paste(img, (0, y), img if img.mode in ("RGBA", "LA") else None)
         y += img.height
     return out
 
