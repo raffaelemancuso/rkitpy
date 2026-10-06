@@ -6,7 +6,7 @@ import pytest
 pytest.importorskip("PIL")
 from PIL import Image  # noqa: E402
 
-from raffalib import rnote  # noqa: E402
+from rkitpy import rnote  # noqa: E402
 
 
 def img(w, h, color="black", mode="RGB"):

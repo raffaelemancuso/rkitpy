@@ -12,19 +12,19 @@ for details):
 
 .. code-block:: console
 
-   uv add --editable "/path/to/raffalib-python[pandas,polars]"
+   uv add --editable "/path/to/rkitpy[pandas,polars]"
 
 Set up a logger
 ---------------
 
 The change-logging accessors emit their messages through the standard
-:mod:`logging` module. Call :func:`raffalib.create_logger` once to configure it:
+:mod:`logging` module. Call :func:`rkitpy.create_logger` once to configure it:
 
 .. code-block:: python
 
-   import raffalib
+   import rkitpy
 
-   raffalib.create_logger(rich=False, fmt="{message}")
+   rkitpy.create_logger(rich=False, fmt="{message}")
 
 Use ``rich=True`` for colourised console output, or drop ``fmt`` to keep the
 default ``timestamp - level - name - message`` format.
@@ -32,13 +32,13 @@ default ``timestamp - level - name - message`` format.
 Log changes in a pipeline
 -------------------------
 
-Importing :mod:`raffalib.pandas` (or :mod:`raffalib.polars`) registers a
+Importing :mod:`rkitpy.pandas` (or :mod:`rkitpy.polars`) registers a
 ``.raffa`` accessor. Wrap any pipeline between ``startlog()`` and ``endlog()``
 to log how the data changed:
 
 >>> import pandas as pd
 >>> import numpy as np
->>> import raffalib.pandas  # registers the `.raffa` accessor
+>>> import rkitpy.pandas  # registers the `.raffa` accessor
 >>> df = pd.DataFrame(
 ...     {
 ...         "species": ["Adelie", "Adelie", "Adelie", "Gentoo", "Gentoo", "Chinstrap"],
@@ -56,7 +56,7 @@ Changed 3/18 (16.67%) values.
 The polars accessor works identically:
 
 >>> import polars as pl
->>> import raffalib.polars  # registers the `.raffa` namespace
+>>> import rkitpy.polars  # registers the `.raffa` namespace
 >>> df = pl.DataFrame(
 ...     {
 ...         "species": ["Adelie", "Adelie", "Adelie", "Gentoo", "Gentoo", "Chinstrap"],

@@ -1,4 +1,4 @@
-from raffalib.list_replace import list_replace
+from rkitpy.list_replace import list_replace
 
 
 def test_replaces_all_occurrences_in_place():

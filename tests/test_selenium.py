@@ -4,7 +4,7 @@ import pytest
 
 pytest.importorskip("selenium")
 
-from raffalib import selenium as rsel  # noqa: E402
+from rkitpy import selenium as rsel  # noqa: E402
 
 
 def test_scroll_into_view_js_executes_script():

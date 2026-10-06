@@ -2,7 +2,7 @@
 Examples
 ########
 
-This guide walks through the main features of **raffalib-python**. For a faster
+This guide walks through the main features of **rkitpy**. For a faster
 introduction see :doc:`quickstart`.
 
 The code snippets on this page are executable :mod:`doctest` examples, verified
@@ -13,7 +13,7 @@ small inline DataFrames, so they run without any network access or data files.
 Logging concepts
 ****************
 
-Importing :mod:`raffalib.pandas` or :mod:`raffalib.polars` registers a ``.raffa``
+Importing :mod:`rkitpy.pandas` or :mod:`rkitpy.polars` registers a ``.raffa``
 accessor (a namespace on polars, an accessor on pandas) that adds STATA-like
 change logging to a Series or DataFrame.
 
@@ -39,13 +39,13 @@ how many cell values changed.
    next segment should detect value-level changes.
 
 Messages are emitted through the standard :mod:`logging` module. Configure it
-once with :func:`raffalib.create_logger` so the messages reach your console:
+once with :func:`rkitpy.create_logger` so the messages reach your console:
 
 .. code-block:: python
 
-   import raffalib
+   import rkitpy
 
-   raffalib.create_logger(rich=False, fmt="{message}")
+   rkitpy.create_logger(rich=False, fmt="{message}")
 
 The doctests below assume such a message-only logger. Most of them pass
 ``timeit=False`` so the output is deterministic; in real use you will usually
@@ -62,7 +62,7 @@ Build a small DataFrame to work with:
 
 >>> import pandas as pd
 >>> import numpy as np
->>> import raffalib.pandas  # registers the `.raffa` accessor
+>>> import rkitpy.pandas  # registers the `.raffa` accessor
 >>> df = pd.DataFrame(
 ...     {
 ...         "species": ["Adelie", "Adelie", "Adelie", "Adelie", "Adelie",
@@ -229,7 +229,7 @@ Export a DataFrame to a Word ``.docx`` table:
    df.head(5).raffa.to_docx("table.docx")
 
 Document and heading options (e.g. ``heading_text``, ``landscape``) are passed
-in ``doc_options`` and forwarded to :class:`~raffalib.export_docx.DocxFile`;
+in ``doc_options`` and forwarded to :class:`~rkitpy.export_docx.DocxFile`;
 table options (e.g. ``table_style``, ``table_font_size``) are passed in
 ``table_options`` and forwarded to its ``add_table`` method:
 
@@ -252,7 +252,7 @@ Import the libraries and build a DataFrame with a few missing values:
 
 >>> import polars as pl
 >>> import polars.selectors as cs
->>> import raffalib.polars  # registers the `.raffa` namespace
+>>> import rkitpy.polars  # registers the `.raffa` namespace
 >>> df = pl.DataFrame(
 ...     {
 ...         "species": ["Adelie", "Adelie", "Adelie", "Adelie", "Adelie",
@@ -371,9 +371,9 @@ shape: (2, 3)
 └─────┴─────┴─────┘
 
 Use ``perc`` to express each cell as a percentage along an axis (see
-:class:`~raffalib.polars.PercOptions`):
+:class:`~rkitpy.polars.PercOptions`):
 
->>> from raffalib.polars import PercOptions
+>>> from rkitpy.polars import PercOptions
 >>> ct.raffa.crosstab("grp", "cls", perc=PercOptions.ROWS)
 shape: (2, 3)
 ┌─────┬───────────┬───────────┐
@@ -484,20 +484,20 @@ table options in ``table_options``:
 Utilities
 *********
 
-Beyond the DataFrame accessors, ``raffalib`` ships a handful of standalone
+Beyond the DataFrame accessors, ``rkitpy`` ships a handful of standalone
 helpers.
 
 Logger setup
 ============
 
-:func:`raffalib.create_logger` configures the standard-library logger used by
+:func:`rkitpy.create_logger` configures the standard-library logger used by
 the change-logging accessors:
 
 .. code-block:: python
 
-   import raffalib
+   import rkitpy
 
-   logger = raffalib.create_logger(rich=False, fmt="{message}")
+   logger = rkitpy.create_logger(rich=False, fmt="{message}")
 
 Pass ``rich=True`` for colourised console output via
 `rich <https://rich.readthedocs.io/>`_, or omit ``fmt`` for the default
@@ -506,30 +506,30 @@ Pass ``rich=True`` for colourised console output via
 Batched iteration
 =================
 
-:func:`raffalib.tqdm_batch` wraps a sized iterable in a
+:func:`rkitpy.tqdm_batch` wraps a sized iterable in a
 `tqdm <https://tqdm.github.io/>`_ progress bar that advances once per batch:
 
 .. code-block:: python
 
-   from raffalib import tqdm_batch
+   from rkitpy import tqdm_batch
 
    for batch in tqdm_batch(items, batch_size=100)():
        process(batch)
 
-:func:`raffalib.itertools.batch_boundaries` is the index-only equivalent,
+:func:`rkitpy.itertools.batch_boundaries` is the index-only equivalent,
 yielding ``(batch_index, start, end)`` tuples (1-based, inclusive):
 
->>> from raffalib.itertools import batch_boundaries
+>>> from rkitpy.itertools import batch_boundaries
 >>> list(batch_boundaries(20, 3))
 [(0, 1, 3), (1, 4, 6), (2, 7, 9), (3, 10, 12), (4, 13, 15), (5, 16, 18), (6, 19, 20)]
 
 List editing
 ============
 
-:func:`raffalib.list_replace` replaces every occurrence of a value in a list,
+:func:`rkitpy.list_replace` replaces every occurrence of a value in a list,
 in place:
 
->>> from raffalib import list_replace
+>>> from rkitpy import list_replace
 >>> lst = [1, 2, 3, 2, 4]
 >>> list_replace(lst, 2, 5)
 >>> lst
@@ -538,7 +538,7 @@ in place:
 Pickling
 ========
 
-:func:`raffalib.mypickle.write_pickle` and :func:`raffalib.mypickle.read_pickle`
+:func:`rkitpy.mypickle.write_pickle` and :func:`rkitpy.mypickle.read_pickle`
 serialise arbitrary Python objects with
 `jsonpickle <https://jsonpickle.github.io/>`_, writing to a timestamped file
 named ``{stem}_{YYYY-MM-DD-HH-MM-SS}``:
@@ -546,7 +546,7 @@ named ``{stem}_{YYYY-MM-DD-HH-MM-SS}``:
 .. code-block:: python
 
    from pathlib import Path
-   from raffalib.mypickle import write_pickle, read_pickle
+   from rkitpy.mypickle import write_pickle, read_pickle
 
    write_pickle({"a": 1}, Path("."), "mydata")
    obj = read_pickle(Path("mydata_2026-06-20-09-30-00"))

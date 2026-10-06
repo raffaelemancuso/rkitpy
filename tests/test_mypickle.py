@@ -1,4 +1,4 @@
-from raffalib import mypickle
+from rkitpy import mypickle
 
 
 def test_write_then_read_roundtrip(tmp_path):

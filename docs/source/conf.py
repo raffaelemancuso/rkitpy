@@ -12,13 +12,13 @@ from pathlib import Path
 
 src_path = Path("../../src")
 assert src_path.is_dir()
-assert (src_path / "raffalib").is_dir()
+assert (src_path / "rkitpy").is_dir()
 sys.path.insert(0, src_path.resolve())  # Source code dir relative to this file
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "raffalib-python"
+project = "rkitpy"
 copyright = "2026, Raffaele Mancuso"
 author = "Raffaele Mancuso"
 
@@ -41,7 +41,7 @@ import doctest as _doctest  # noqa: E402
 
 doctest_default_flags = _doctest.ELLIPSIS | _doctest.NORMALIZE_WHITESPACE
 
-# Run once before every doctest group: import the libraries, route raffalib's
+# Run once before every doctest group: import the libraries, route rkitpy's
 # logging output to stdout so doctest can capture it (mirroring
 # ``create_logger(rich=False, fmt="{message}")``), and pin the table-rendering
 # width so the captured reprs are deterministic.
@@ -51,9 +51,9 @@ import numpy as np
 import pandas as pd
 import polars as pl
 import polars.selectors as cs
-import raffalib
-import raffalib.pandas
-import raffalib.polars
+import rkitpy
+import rkitpy.pandas
+import rkitpy.polars
 
 
 class _DoctestLogHandler(logging.Handler):
@@ -63,7 +63,7 @@ class _DoctestLogHandler(logging.Handler):
 
 _handler = _DoctestLogHandler()
 _handler.setFormatter(logging.Formatter("%(message)s"))
-_raffalogger = logging.getLogger("raffalib")
+_raffalogger = logging.getLogger("rkitpy")
 _raffalogger.handlers = [_handler]
 _raffalogger.setLevel(logging.INFO)
 _raffalogger.propagate = False
@@ -77,7 +77,7 @@ pl.Config(thousands_separator=",", tbl_cols=-1, tbl_width_chars=200)
 autoapi_python_class_content = "both"
 
 # Keep the default options but drop "imported-members": the package re-exports
-# (e.g. ``raffalib.list_replace``) would otherwise be documented both on the
+# (e.g. ``rkitpy.list_replace``) would otherwise be documented both on the
 # package page and on their own module page, producing duplicate-object warnings.
 autoapi_options = [
     "members",

@@ -5,8 +5,8 @@ import pytest
 pl = pytest.importorskip("polars")
 pytest.importorskip("polars_config_meta")
 
-import raffalib.polars  # noqa: E402,F401  registers the `raffa` namespace
-from raffalib.polars import PercOptions  # noqa: E402
+import rkitpy.polars  # noqa: E402,F401  registers the `raffa` namespace
+from rkitpy.polars import PercOptions  # noqa: E402
 
 
 def test_series_freq_has_total_row():
@@ -47,7 +47,7 @@ def test_dataframe_crosstab_row_percentages():
 
 def test_endlog_removed_rows(caplog):
     df = pl.DataFrame({"a": [1, 2, 3, 4]})
-    with caplog.at_level(logging.INFO, logger="raffalib.polars"):
+    with caplog.at_level(logging.INFO, logger="rkitpy.polars"):
         df.raffa.startlog()
         df = df.filter(pl.col("a") > 1)
         df.raffa.endlog(timeit=False)
@@ -59,7 +59,7 @@ def test_endlog_removed_rows(caplog):
 
 def test_series_endlog_matches_pandas_format(caplog):
     s = pl.Series("x", [1, 2, 3, 4, 5])
-    with caplog.at_level(logging.INFO, logger="raffalib.polars"):
+    with caplog.at_level(logging.INFO, logger="rkitpy.polars"):
         s.raffa.startlog()
         s = s.filter(s > 2)
         s.raffa.endlog(timeit=False)
@@ -71,7 +71,7 @@ def test_series_endlog_matches_pandas_format(caplog):
 
 def test_midlog_logs_then_restarts(caplog):
     df = pl.DataFrame({"a": [1, 2, 3, 4]})
-    with caplog.at_level(logging.INFO, logger="raffalib.polars"):
+    with caplog.at_level(logging.INFO, logger="rkitpy.polars"):
         df.raffa.startlog()
         df = df.filter(pl.col("a") > 1)
         df = df.raffa.midlog(timeit=False)  # logs the first step, restarts logging
@@ -84,7 +84,7 @@ def test_midlog_logs_then_restarts(caplog):
 
 def test_midlog_clone_enables_value_diff(caplog):
     df = pl.DataFrame({"a": [1, 2, 3, 4]})
-    with caplog.at_level(logging.INFO, logger="raffalib.polars"):
+    with caplog.at_level(logging.INFO, logger="rkitpy.polars"):
         df.raffa.startlog()
         df = df.filter(pl.col("a") > 1)
         df = df.raffa.midlog(timeit=False, clone=True)  # restart WITH a clone
@@ -96,7 +96,7 @@ def test_midlog_clone_enables_value_diff(caplog):
 
 def test_endlog_timeit_appends_duration(caplog):
     df = pl.DataFrame({"a": [1, 2, 3]})
-    with caplog.at_level(logging.INFO, logger="raffalib.polars"):
+    with caplog.at_level(logging.INFO, logger="rkitpy.polars"):
         df.raffa.startlog()
         df.raffa.endlog(timeit=True)
     assert any("Took:" in r.message for r in caplog.records)
@@ -105,7 +105,7 @@ def test_endlog_timeit_appends_duration(caplog):
 def test_join_inner_drops_source_columns(caplog):
     left = pl.DataFrame({"k": [1, 2, 3], "lv": [10, 20, 30]})
     right = pl.DataFrame({"k": [2, 3, 4], "rv": [200, 300, 400]})
-    with caplog.at_level(logging.INFO, logger="raffalib.polars"):
+    with caplog.at_level(logging.INFO, logger="rkitpy.polars"):
         out = left.raffa.join(right, on="k", how="inner")
     assert out.shape[0] == 2
     assert set(out.columns) == {"k", "lv", "rv"}
@@ -122,7 +122,7 @@ def test_join_keep_row_index_requires_permute():
 
 def test_endlog_add_rows_to_empty_frame_is_guarded(caplog):
     df = pl.DataFrame({"a": []}, schema={"a": pl.Float64})
-    with caplog.at_level(logging.INFO, logger="raffalib.polars"):
+    with caplog.at_level(logging.INFO, logger="rkitpy.polars"):
         df.raffa.startlog()
         df = df.vstack(pl.DataFrame({"a": [1.0, 2.0, 3.0]}))
         df.raffa.endlog(timeit=False)
@@ -134,7 +134,7 @@ def test_endlog_add_rows_to_empty_frame_is_guarded(caplog):
 def test_join_empty_output_does_not_divide_by_zero(caplog):
     left = pl.DataFrame({"k": [1, 2]})
     right = pl.DataFrame({"k": [3, 4]})
-    with caplog.at_level(logging.INFO, logger="raffalib.polars"):
+    with caplog.at_level(logging.INFO, logger="rkitpy.polars"):
         out = left.raffa.join(right, on="k", how="inner")
     assert out.shape[0] == 0
     assert any("From both: 0/0 (N/A)" in r.message for r in caplog.records)

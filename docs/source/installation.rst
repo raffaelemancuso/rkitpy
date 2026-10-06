@@ -1,7 +1,7 @@
 Installation
 ============
 
-**raffalib-python** requires **Python ≥ 3.13** and is distributed as a
+**rkitpy** requires **Python ≥ 3.13** and is distributed as a
 local / editable install.
 
 1. Clone the repository.
@@ -30,9 +30,9 @@ optional-dependency *extras*, so you only pull in what you use:
    * - Extra
      - Enables
    * - ``pandas``
-     - the :mod:`raffalib.pandas` accessors
+     - the :mod:`rkitpy.pandas` accessors
    * - ``polars``
-     - the :mod:`raffalib.polars` accessors and join logging
+     - the :mod:`rkitpy.polars` accessors and join logging
    * - ``bibliometrics``
      - Scopus helpers
    * - ``crypto``
@@ -40,7 +40,7 @@ optional-dependency *extras*, so you only pull in what you use:
    * - ``db``
      - SQLAlchemy view helpers
    * - ``rnote``
-     - :mod:`raffalib.rnote`, writing Rnote (``.rnote``) notebooks from images and text
+     - :mod:`rkitpy.rnote`, writing Rnote (``.rnote``) notebooks from images and text
    * - ``web``
      - Selenium helpers
    * - ``docs``

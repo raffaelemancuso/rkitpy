@@ -1,4 +1,4 @@
-# raffalib-python Miscellaneous functions
+# rkitpy Miscellaneous functions
 # Copyright (C) 2026 Raffaele Mancuso
 #
 # This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@ Internal helpers shared by the pandas and polars logging accessors.
 
 These functions only build human-readable log messages; the
 library-specific mechanics (metadata storage, cloning, value comparison)
-stay in :mod:`raffalib.pandas` and :mod:`raffalib.polars`.
+stay in :mod:`rkitpy.pandas` and :mod:`rkitpy.polars`.
 """
 
 import time

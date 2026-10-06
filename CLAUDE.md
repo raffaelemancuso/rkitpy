@@ -4,13 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-`raffalib` is a Python (≥3.13) helper library for data wrangling. Its headline
+`rkitpy` is a Python (≥3.13) helper library for data wrangling. Its headline
 feature is **STATA-like change logging** layered onto pandas and polars via a
 `.raffa` accessor/namespace, plus `.docx` export. It also bundles small,
 mostly-independent utilities (logging setup, pickling, progress bars, Selenium,
 SQLAlchemy view helpers, bibliometrics/Scopus helpers).
 
-Packaged with the `uv_build` backend in a **src layout** (`src/raffalib/`).
+Packaged with the `uv_build` backend in a **src layout** (`src/rkitpy/`).
 
 ## Commands
 
@@ -42,7 +42,7 @@ pandas/polars/db/web/bibliometrics extras so nothing is skipped) and
 
 ### The two backends share one message builder — this is the central invariant
 
-`src/raffalib/_logutils.py` is the **single source of truth for all
+`src/rkitpy/_logutils.py` is the **single source of truth for all
 human-readable log text** (row/column deltas, changed-cell counts, join
 provenance, elapsed time, the `JoinCounts` dataclass). `pandas.py` and
 `polars.py` only do backend-specific mechanics (state storage, cloning, value
@@ -71,7 +71,7 @@ differently:
   (imported for its import side effect). `endlog()` first checks the metadata
   exists and warns "You have to call startlog() before..." if not.
 
-Both register on import: `import raffalib.pandas` / `import raffalib.polars` is
+Both register on import: `import rkitpy.pandas` / `import rkitpy.polars` is
 what installs the `.raffa` accessor. Each module deletes any pre-existing
 `.raffa` accessor at import time to suppress pandas/polars override warnings.
 
@@ -107,7 +107,7 @@ into `table_options` unless the caller sets it explicitly.
 
 `create_logger()` is the opinionated entry point users call to actually see the
 output (plain `StreamHandler` or `rich.RichHandler`). It re-enables the
-`raffalib.pandas` / `raffalib.polars` loggers explicitly after `dictConfig`.
+`rkitpy.pandas` / `rkitpy.polars` loggers explicitly after `dictConfig`.
 
 ## Conventions
 

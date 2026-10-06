@@ -1,4 +1,4 @@
-# raffalib-python Miscellaneous functions
+# rkitpy Miscellaneous functions
 # Copyright (C) 2026 Raffaele Mancuso
 #
 # This program is free software: you can redistribute it and/or modify
@@ -61,7 +61,7 @@ def report_save(spec, title: str, fp, logger=None, timestamp: str | None = None)
     """Build the report, print it, write it to `fp` and return it.
 
     `fp` is conventionally ``data/<stage>/<N>_report.txt``, numbered after the
-    producing script. Pass a raffalib logger to also log the save location.
+    producing script. Pass a rkitpy logger to also log the save location.
     """
     report = report_build(spec, title, timestamp=timestamp)
     print(report, end="")

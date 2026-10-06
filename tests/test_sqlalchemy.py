@@ -2,7 +2,7 @@ import pytest
 
 sa = pytest.importorskip("sqlalchemy")
 
-from raffalib.sqlalchemy import duckdb_id_field, view  # noqa: E402
+from rkitpy.sqlalchemy import duckdb_id_field, view  # noqa: E402
 
 
 def test_duckdb_id_field_is_primary_key_named_id():

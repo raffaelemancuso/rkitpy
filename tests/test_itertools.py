@@ -1,4 +1,4 @@
-from raffalib.itertools import batch_boundaries
+from rkitpy.itertools import batch_boundaries
 
 
 def test_docstring_example():

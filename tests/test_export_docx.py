@@ -4,7 +4,7 @@ pytest.importorskip("docx")
 
 from docx import Document  # noqa: E402
 
-from raffalib.export_docx import DocxFile  # noqa: E402
+from rkitpy.export_docx import DocxFile  # noqa: E402
 
 
 def test_create_table_and_save(tmp_path):

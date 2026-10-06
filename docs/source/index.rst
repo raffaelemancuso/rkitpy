@@ -1,12 +1,12 @@
-.. raffalib-python documentation master file, created by
+.. rkitpy documentation master file, created by
    sphinx-quickstart on Mon Feb 16 10:41:01 2026.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-raffalib-python documentation
+rkitpy documentation
 =============================
 
-**raffalib-python** is a small library of helper functions for data wrangling.
+**rkitpy** is a small library of helper functions for data wrangling.
 
 Its main purpose is to enrich `pandas <https://pandas.pydata.org/>`_ and
 `polars <https://pola.rs/>`_ with `STATA <https://www.stata.com/>`_-like logging
@@ -34,10 +34,10 @@ A taste
 
    import pandas as pd
    import numpy as np
-   import raffalib
-   import raffalib.pandas  # registers the `.raffa` accessor
+   import rkitpy
+   import rkitpy.pandas  # registers the `.raffa` accessor
 
-   raffalib.create_logger(rich=False, fmt="{message}")
+   rkitpy.create_logger(rich=False, fmt="{message}")
 
    df = pd.DataFrame(
        {

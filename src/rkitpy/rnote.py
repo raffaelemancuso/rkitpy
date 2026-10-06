@@ -1,4 +1,4 @@
-# raffalib-python Miscellaneous functions
+# rkitpy Miscellaneous functions
 # Copyright (C) 2026 Raffaele Mancuso
 #
 # This program is free software: you can redistribute it and/or modify
@@ -39,7 +39,7 @@ Requires Pillow (``rnote`` extra); :func:`render_clip` also needs PyMuPDF.
 Example::
 
     from PIL import Image
-    from raffalib.rnote import Text, write_rnote
+    from rkitpy.rnote import Text, write_rnote
 
     write_rnote("ex_1.rnote", Image.open("exercise_1.png"))
     write_rnote("ex_2.rnote", ["Exercise 2", Image.open("exercise_2.png")])

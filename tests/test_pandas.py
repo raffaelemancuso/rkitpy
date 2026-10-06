@@ -4,7 +4,7 @@ import pytest
 
 pd = pytest.importorskip("pandas")
 
-import raffalib.pandas  # noqa: E402,F401  registers the `raffa` accessor
+import rkitpy.pandas  # noqa: E402,F401  registers the `raffa` accessor
 
 
 def test_add_prefix_if_not_exists():
@@ -55,7 +55,7 @@ def test_dataframe_freq_delegates_to_series():
 
 def test_endlog_logs_removed_rows(caplog):
     df = pd.DataFrame({"a": [1, 2, 3, 4]})
-    with caplog.at_level(logging.INFO, logger="raffalib.pandas"):
+    with caplog.at_level(logging.INFO, logger="rkitpy.pandas"):
         df.raffa.startlog()
         df = df[df["a"] > 1]
         df.raffa.endlog()
@@ -67,7 +67,7 @@ def test_endlog_logs_removed_rows(caplog):
 
 def test_endlog_logs_value_changes(caplog):
     df = pd.DataFrame({"a": [1, 2, 3, 4]})
-    with caplog.at_level(logging.INFO, logger="raffalib.pandas"):
+    with caplog.at_level(logging.INFO, logger="rkitpy.pandas"):
         df.raffa.startlog(clone=True)
         df = df.assign(a=[1, 99, 3, 99])
         df.raffa.endlog()
@@ -76,7 +76,7 @@ def test_endlog_logs_value_changes(caplog):
 
 def test_endlog_clone_false_message(caplog):
     df = pd.DataFrame({"a": [1, 2, 3]})
-    with caplog.at_level(logging.INFO, logger="raffalib.pandas"):
+    with caplog.at_level(logging.INFO, logger="rkitpy.pandas"):
         df.raffa.startlog(clone=False)
         df.raffa.endlog()
     assert any("No value-level comparison" in r.message for r in caplog.records)
@@ -84,7 +84,7 @@ def test_endlog_clone_false_message(caplog):
 
 def test_series_endlog_removed_values(caplog):
     s = pd.Series([1, 2, 3, 4, 5])
-    with caplog.at_level(logging.INFO, logger="raffalib.pandas"):
+    with caplog.at_level(logging.INFO, logger="rkitpy.pandas"):
         s.raffa.startlog()
         s = s[s > 2]
         s.raffa.endlog()
@@ -96,7 +96,7 @@ def test_series_endlog_removed_values(caplog):
 
 def test_midlog_logs_then_restarts(caplog):
     df = pd.DataFrame({"a": [1, 2, 3, 4]})
-    with caplog.at_level(logging.INFO, logger="raffalib.pandas"):
+    with caplog.at_level(logging.INFO, logger="rkitpy.pandas"):
         df.raffa.startlog()
         df = df[df["a"] > 1]
         df = df.raffa.midlog(timeit=False)  # logs the first step, restarts logging
@@ -109,7 +109,7 @@ def test_midlog_logs_then_restarts(caplog):
 
 def test_midlog_clone_enables_value_diff(caplog):
     df = pd.DataFrame({"a": [1, 2, 3, 4]})
-    with caplog.at_level(logging.INFO, logger="raffalib.pandas"):
+    with caplog.at_level(logging.INFO, logger="rkitpy.pandas"):
         df.raffa.startlog()
         df = df[df["a"] > 1]
         df = df.raffa.midlog(timeit=False, clone=True)  # restart WITH a clone
@@ -122,7 +122,7 @@ def test_midlog_clone_enables_value_diff(caplog):
 def test_join_inner_drops_source_columns(caplog):
     left = pd.DataFrame({"k": [1, 2, 3], "lv": [10, 20, 30]})
     right = pd.DataFrame({"k": [2, 3, 4], "rv": [200, 300, 400]})
-    with caplog.at_level(logging.INFO, logger="raffalib.pandas"):
+    with caplog.at_level(logging.INFO, logger="rkitpy.pandas"):
         out = left.raffa.join(right, on="k", how="inner")
     assert out.shape[0] == 2
     assert set(out.columns) == {"k", "lv", "rv"}
@@ -138,7 +138,7 @@ def test_join_keep_row_index_appends_source_columns():
 def test_join_left_logs_row_provenance(caplog):
     left = pd.DataFrame({"k": [1, 2, 3, 4], "lv": [10, 20, 30, 40]})
     right = pd.DataFrame({"k": [2, 3], "rv": [200, 300]})
-    with caplog.at_level(logging.INFO, logger="raffalib.pandas"):
+    with caplog.at_level(logging.INFO, logger="rkitpy.pandas"):
         out = left.raffa.join(right, on="k", how="left")
     assert out.shape[0] == 4
     log = "\n".join(r.message for r in caplog.records)
@@ -151,7 +151,7 @@ def test_join_left_logs_row_provenance(caplog):
 def test_join_semi_is_detected_as_filtering(caplog):
     left = pd.DataFrame({"k": [1, 2, 3, 4, 5]})
     right = pd.DataFrame({"k": [2, 3, 4]})
-    with caplog.at_level(logging.INFO, logger="raffalib.pandas"):
+    with caplog.at_level(logging.INFO, logger="rkitpy.pandas"):
         out = left.raffa.join(right, on="k", how="semi")
     assert out["k"].tolist() == [2, 3, 4]
     assert list(out.columns) == ["k"]
@@ -168,7 +168,7 @@ def test_join_anti_returns_unmatched_left_rows():
 
 def test_endlog_add_rows_to_empty_frame_is_guarded(caplog):
     df = pd.DataFrame({"a": []})
-    with caplog.at_level(logging.INFO, logger="raffalib.pandas"):
+    with caplog.at_level(logging.INFO, logger="rkitpy.pandas"):
         df.raffa.startlog()
         df = df.reindex(range(3))
         df.raffa.endlog(timeit=False)
@@ -180,7 +180,7 @@ def test_endlog_add_rows_to_empty_frame_is_guarded(caplog):
 def test_join_empty_output_does_not_divide_by_zero(caplog):
     left = pd.DataFrame({"k": [1, 2]})
     right = pd.DataFrame({"k": [3, 4]})
-    with caplog.at_level(logging.INFO, logger="raffalib.pandas"):
+    with caplog.at_level(logging.INFO, logger="rkitpy.pandas"):
         out = left.raffa.join(right, on="k", how="inner")
     assert out.shape[0] == 0
     assert any("From both: 0/0 (N/A)" in r.message for r in caplog.records)

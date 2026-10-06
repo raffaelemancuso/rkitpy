@@ -3,7 +3,7 @@ import pytest
 pytest.importorskip("requests")
 pytest.importorskip("fake_useragent")
 
-from raffalib import ScopusUtils as scopus_mod  # noqa: E402
+from rkitpy import ScopusUtils as scopus_mod  # noqa: E402
 
 
 class _FakeResponse:

@@ -1,4 +1,4 @@
-from raffalib.tqdm import tqdm_batch
+from rkitpy.tqdm import tqdm_batch
 
 
 def test_batches_cover_all_items():

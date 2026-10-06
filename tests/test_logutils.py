@@ -2,7 +2,7 @@ import time
 
 import pytest
 
-from raffalib import _logutils
+from rkitpy import _logutils
 
 
 def test_clone_false_msg():

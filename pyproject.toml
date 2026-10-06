@@ -1,5 +1,5 @@
 [project]
-name = "raffalib"
+name = "rkitpy"
 version = "0.1"
 description = "My Python library"
 readme = "README.md"

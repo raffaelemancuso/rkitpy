@@ -1,4 +1,4 @@
-# raffalib-python
+# rkitpy
 
 A Python library of helper functions for data wrangling. Its main purpose is to
 enrich [pandas](https://pandas.pydata.org/) and [polars](https://pola.rs/) with
@@ -31,10 +31,10 @@ Requires **Python ≥ 3.13**. The package is distributed as a local/editable ins
 
 ```console
 # with uv
-uv add --editable /path/to/raffalib-python
+uv add --editable /path/to/rkitpy
 
 # or with pip
-python3 -m pip install --editable /path/to/raffalib-python
+python3 -m pip install --editable /path/to/rkitpy
 ```
 
 ### Optional dependencies
@@ -44,8 +44,8 @@ only pull in what you use:
 
 | Extra            | Enables                                              |
 | ---------------- | ---------------------------------------------------- |
-| `pandas`         | `raffalib.pandas` accessors                          |
-| `polars`         | `raffalib.polars` accessors and join logging         |
+| `pandas`         | `rkitpy.pandas` accessors                          |
+| `polars`         | `rkitpy.polars` accessors and join logging         |
 | `bibliometrics`  | Scopus helpers                                       |
 | `db`             | SQLAlchemy view helpers                              |
 | `rnote`          | Write Rnote (`.rnote`) notebooks from images and text|
@@ -55,7 +55,7 @@ only pull in what you use:
 
 ```console
 # example: install with the pandas and polars extras
-uv add --editable "/path/to/raffalib-python[pandas,polars]"
+uv add --editable "/path/to/rkitpy[pandas,polars]"
 ```
 
 ## Quick start
@@ -65,10 +65,10 @@ uv add --editable "/path/to/raffalib-python[pandas,polars]"
 ```python
 import numpy as np
 import pandas as pd
-import raffalib
-import raffalib.pandas  # registers the `.raffa` accessor
+import rkitpy
+import rkitpy.pandas  # registers the `.raffa` accessor
 
-logger = raffalib.create_logger(rich=False, fmt="{message}")
+logger = rkitpy.create_logger(rich=False, fmt="{message}")
 
 df = pd.DataFrame(
     {
@@ -91,10 +91,10 @@ _ = df.raffa.startlog(clone=True).fillna(0).raffa.endlog(timeit=False)
 
 ```python
 import polars as pl
-import raffalib
-import raffalib.polars  # registers the `.raffa` namespace
+import rkitpy
+import rkitpy.polars  # registers the `.raffa` namespace
 
-logger = raffalib.create_logger(rich=False, fmt="{message}")
+logger = rkitpy.create_logger(rich=False, fmt="{message}")
 
 df = pl.DataFrame(
     {
@@ -150,17 +150,17 @@ See the [Examples](https://raffalib-python.readthedocs.io) page for the full wal
 
 | Module                  | What it provides                                                        |
 | ----------------------- | ---------------------------------------------------------------------- |
-| `raffalib.pandas`       | `.raffa` accessor: `startlog`/`endlog`/`midlog`, `join`, `freq`, `to_docx`, `add_prefix_if_not_exists`, `get_duplicates`, `sort_columns` |
-| `raffalib.polars`       | `.raffa` namespace: `startlog`/`endlog`/`midlog`, `freq`, `crosstab`, `join`, `replace_string_with_null`, `to_docx` |
-| `raffalib.logging`      | `create_logger` — opinionated logging setup (plain or `rich`)          |
-| `raffalib.export_docx`  | `DocxFile` — low-level Word document/table builder                     |
-| `raffalib.tqdm`         | `tqdm_batch` — batched progress bars                                    |
-| `raffalib.itertools`    | `batch_boundaries` — compute batch start/end indices                   |
-| `raffalib.list_replace` | `list_replace` — replace occurrences in a list                         |
-| `raffalib.mypickle`     | `read_pickle` / `write_pickle` helpers                                  |
-| `raffalib.selenium`     | Scrolling and explicit-wait helpers for Selenium WebDriver             |
-| `raffalib.sqlalchemy`   | SQLAlchemy `CREATE VIEW` / `DROP VIEW` constructs and a `view()` helper |
-| `raffalib.ScopusUtils`  | Scopus API helpers                                                      |
+| `rkitpy.pandas`       | `.raffa` accessor: `startlog`/`endlog`/`midlog`, `join`, `freq`, `to_docx`, `add_prefix_if_not_exists`, `get_duplicates`, `sort_columns` |
+| `rkitpy.polars`       | `.raffa` namespace: `startlog`/`endlog`/`midlog`, `freq`, `crosstab`, `join`, `replace_string_with_null`, `to_docx` |
+| `rkitpy.logging`      | `create_logger` — opinionated logging setup (plain or `rich`)          |
+| `rkitpy.export_docx`  | `DocxFile` — low-level Word document/table builder                     |
+| `rkitpy.tqdm`         | `tqdm_batch` — batched progress bars                                    |
+| `rkitpy.itertools`    | `batch_boundaries` — compute batch start/end indices                   |
+| `rkitpy.list_replace` | `list_replace` — replace occurrences in a list                         |
+| `rkitpy.mypickle`     | `read_pickle` / `write_pickle` helpers                                  |
+| `rkitpy.selenium`     | Scrolling and explicit-wait helpers for Selenium WebDriver             |
+| `rkitpy.sqlalchemy`   | SQLAlchemy `CREATE VIEW` / `DROP VIEW` constructs and a `view()` helper |
+| `rkitpy.ScopusUtils`  | Scopus API helpers                                                      |
 
 ## Development
 

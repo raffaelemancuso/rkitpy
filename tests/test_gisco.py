@@ -1,7 +1,7 @@
 import polars as pl
 import pytest
 
-from raffalib import gisco
+from rkitpy import gisco
 
 
 def test_postcode_key():

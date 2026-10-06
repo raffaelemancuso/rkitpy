@@ -1,4 +1,4 @@
-# raffalib-python Miscellaneous functions
+# rkitpy Miscellaneous functions
 # Copyright (C) 2026 Raffaele Mancuso
 #
 # This program is free software: you can redistribute it and/or modify

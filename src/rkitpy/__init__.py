@@ -1,4 +1,4 @@
-# raffalib-python Miscellaneous functions
+# rkitpy Miscellaneous functions
 # Copyright (C) 2026 Raffaele Mancuso
 #
 # This program is free software: you can redistribute it and/or modify
@@ -14,30 +14,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+"""
+rkitpy: A library with helper functions for pandas, polars, selenium, and others.
 
-def list_replace(lst, old, new):
-    """
-    Replace all occurrences of a value in a list (in place).
+This library enriches pandas and polars with STATA-like logging and .docx export capabilities.
+It also provides utilities for backup files, logging configuration, progress bars, and more.
+"""
 
-    :param lst: The list to modify (modified in place).
-    :type lst: list
-    :param old: The value to replace.
-    :param new: The new value to insert.
-    :return: None
-    :rtype: None
+from .tqdm import tqdm_batch
+from .logging import create_logger
+from .list_replace import list_replace
+from .report import report_build, report_save
 
-    :Example:
-
-    >>> from raffalib import list_replace
-    >>> lst = [1, 2, 3, 2, 4]
-    >>> list_replace(lst, 2, 5)
-    >>> lst
-    [1, 5, 3, 5, 4]
-    """
-    i = -1
-    try:
-        while True:
-            i = lst.index(old, i + 1)
-            lst[i] = new
-    except ValueError:
-        pass
+__all__ = ["tqdm_batch", "create_logger", "list_replace", "report_build", "report_save"]

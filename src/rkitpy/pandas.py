@@ -1,4 +1,4 @@
-# raffalib-python Miscellaneous functions
+# rkitpy Miscellaneous functions
 # Copyright (C) 2026 Raffaele Mancuso
 #
 # This program is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@ class RaffaSeries:
     """
     The ``.raffa`` accessor on a :class:`pandas.Series`.
 
-    Registered automatically when :mod:`raffalib.pandas` is imported. Provides
+    Registered automatically when :mod:`rkitpy.pandas` is imported. Provides
     STATA-like change logging (:meth:`startlog` / :meth:`endlog` / :meth:`midlog`),
     a :meth:`freq` frequency table, and a :meth:`toset` converter.
     """
@@ -174,7 +174,7 @@ class RaffaDataFrame:
     """
     The ``.raffa`` accessor on a :class:`pandas.DataFrame`.
 
-    Registered automatically when :mod:`raffalib.pandas` is imported. Provides
+    Registered automatically when :mod:`rkitpy.pandas` is imported. Provides
     STATA-like change logging (:meth:`startlog` / :meth:`endlog` / :meth:`midlog`),
     a logging :meth:`join` wrapper, a :meth:`freq` frequency table, and
     :meth:`to_docx` export, plus small column helpers.
@@ -416,11 +416,11 @@ class RaffaDataFrame:
         :param include_index: Whether to export the index
         :type include_index: bool
         :param doc_options: Options forwarded to
-            :class:`~raffalib.export_docx.DocxFile` (document/heading options
+            :class:`~rkitpy.export_docx.DocxFile` (document/heading options
             such as ``heading_text`` or ``landscape``).
         :type doc_options: dict | None
         :param table_options: Options forwarded to
-            :meth:`~raffalib.export_docx.DocxFile.add_table` (table options
+            :meth:`~rkitpy.export_docx.DocxFile.add_table` (table options
             such as ``table_style`` or ``table_font_size``).
             ``table_header_rows`` is set to the number of column levels unless
             given here explicitly.
