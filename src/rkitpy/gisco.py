@@ -1,7 +1,6 @@
 """Offline geocoding of European addresses to NUTS-3 regions with the GISCO
 postcode point dataset (one point per postcode area, each carrying its NUTS-3
-region), as used by orbis-name-scraper (src/eu_all/3_geocode.py) and the
-PATSTAT notebook of paper 6.
+region).
 
 The lookup goes: full postcode -> 4-character postcode prefix (countries whose
 codes are longer, such as NL "3846 AG" and PT "2500-277") -> municipality (LAU)
